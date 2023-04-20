@@ -7,19 +7,19 @@ The project only builds the x86 version because that will run on any of the thre
 It requires two position dependent parameters:
 
 ````
-CheckWinApp.exe &lt;version> &lt;platform>
+CheckWinApp.exe <version> <platform>
 ````
 
-Where **&lt;version>** is the package major version of the minimum required WinAppSdk version.
+Where **&lt;version>** is the package major version of the minimum required WinAppSdk version.<br>
 
-All WinAppSdk 1.2.n semantic versions have a package major version of 2000
-All WinAppSdk 1.3.n semantic versions have a package major version of 3000 etc.
+All WinAppSdk 1.2.n semantic versions have a package major version of 2000<br>
+All WinAppSdk 1.3.n semantic versions have a package major version of 3000 etc.<br>
 
 The **&lt;platform>** is the Windows.System.ProcessorArchitecture enum value. Valid values are:
 
-x86 = 0
-x64 = 9
-arm64 = 12
+x86 = 0<br>
+x64 = 9<br>
+arm64 = 12<br>
 
 For example:
 
