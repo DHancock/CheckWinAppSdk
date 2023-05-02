@@ -31,9 +31,11 @@ int wmain(int argc, wchar_t* argv[])
 
     init_apartment();
 
-    const std::wstring microsoft(L"8wekyb3d8bbwe");
     const hstring user;
-
+    const std::wstring microsoft(L"8wekyb3d8bbwe");
+    const std::wstring ddlmStart(L"Microsoft.WinAppRuntime.DDLM.");
+    const std::wstring frameworkStart(L"Microsoft.WindowsAppRuntime.1.");
+    
     for (auto&& package : PackageManager().FindPackagesForUserWithPackageTypes(user, PackageTypes::Main))
     {
         if ((package.Id().Version().Major == major) &&
@@ -41,18 +43,18 @@ int wmain(int argc, wchar_t* argv[])
             (package.Dependencies().Size() == 1) &&
             (package.Id().PublisherId() == microsoft))
         {
-            const std::wstring mainFullName{ package.Id().FullName() };
+            const std::wstring fullName{ package.Id().FullName() };
 
-            if (mainFullName.find(L"Microsoft.WinAppRuntime.DDLM.") == 0)
+            if ((fullName.size() > ddlmStart.size()) && (fullName.find(ddlmStart) == 0))
             {
                 // check the DDLM package has a dependency on the framework package
                 auto&& dependency = package.Dependencies().GetAt(0);
 
                 if (dependency.IsFramework())
                 {
-                    const std::wstring dependencyFullName{ dependency.Id().FullName() };
+                    const std::wstring frameworkName{ dependency.Id().FullName() };
 
-                    if (dependencyFullName.find(L"Microsoft.WindowsAppRuntime.1.") == 0)
+                    if ((frameworkName.size() > frameworkStart.size()) && (frameworkName.find(frameworkStart) == 0))
                     {
                         return 0;
                     }
