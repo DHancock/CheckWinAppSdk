@@ -10,12 +10,10 @@ It requires two position dependent parameters:
 CheckWinAppSdk.exe <version> <platform>
 ````
 
-Where **&lt;version>** is the package major version of the required WinAppSdk version.<br>
 
-All WinAppSdk 1.2.n versions have a package major version of 2000<br>
-All WinAppSdk 1.3.n versions have a package major version of 3000 etc.<br>
+Where **&lt;version>** is the minimum MSIX package version of a &lt;major>.&lt;minor> WinAppSdk release. ([Reference](https://github.com/DHancock/WinAppSdkCleaner/blob/main/WinAppSdkCleaner/versions.json))
 
-The **&lt;platform>** is the Windows.System.ProcessorArchitecture enum value. Valid values are:
+The **&lt;platform>** is a Windows.System.ProcessorArchitecture enum value. Valid values are:
 
 x86 = 0<br>
 x64 = 9<br>
@@ -24,7 +22,7 @@ arm64 = 12<br>
 For example:
 
 ````
-CheckWinAppSdk.exe 3000 9
+CheckWinApp.exe 3000.851.1712.0 9
 ````
 
-Will return **0** if an x64 WinAppSdk 1.3.n framework and DDLM packages are available for the current user.
+Will return **0** if an x64 WinAppSdk 1.3.1 to 1.3.(1 + n) has been installed. 
