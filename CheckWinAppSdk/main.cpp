@@ -7,24 +7,60 @@ using namespace winrt::Windows::Management::Deployment;
 using namespace winrt::Windows::System;
 
 
+PackageVersion ConvertToPackageVersion(std::wstring str)
+{
+    PackageVersion version{ 0,0,0,0 };
+
+    for (int index = 0; index < 4; index++)
+    {
+        unsigned int pos{ str.find(L".") };
+        int value{ std::stoi(str.substr(0, pos)) };
+
+        if ((value < 0) || (value > UINT16_MAX))
+            throw std::invalid_argument("");
+
+        switch (index)
+        {
+            case 0: version.Major = static_cast<uint16_t>(value); break;
+            case 1: version.Minor = static_cast<uint16_t>(value); break;
+            case 2: version.Build = static_cast<uint16_t>(value); break;
+            case 3: version.Revision = static_cast<uint16_t>(value); break;
+        }
+
+        if ((pos == std::wstring::npos) || (str.size() <=  (pos + 1)))
+            break;
+
+        str.erase(0, pos + 1);
+    }
+
+    return version;
+}
+
+bool IsValidPackageVersion(const PackageVersion& v, const PackageVersion& target)
+{
+    return (v.Major == target.Major) && (v.Minor >= target.Minor) && (v.Build >= target.Build) && (v.Revision >= target.Revision) ;
+}
+
+
+
 int wmain(int argc, wchar_t* argv[])
 {
     // arg[0] = this exe's path
-    // arg[1] = the package major version (WinAppSdk 1.2.n = 2000, 1.3.n = 3000 ...)
+    // arg[1] = the minimum WinAppSdk MSIX package version
     // arg[2] = Windows.System.ProcessorArchitecture enum value (x86 = 0, x64 = 9, arm64 = 12)
 
     if (argc != 3)
         return 3;
 
-    int major;
+    PackageVersion minVersion;
     ProcessorArchitecture platform;
 
     try
     {
-        major = std::stoi(argv[1]);
+        minVersion = ConvertToPackageVersion(argv[1]);
         platform = static_cast<ProcessorArchitecture>(std::stoi(argv[2]));
     }
-    catch (const std::invalid_argument&)
+    catch (const std::exception&)
     {
         return 2;
     }
@@ -38,7 +74,7 @@ int wmain(int argc, wchar_t* argv[])
     
     for (auto&& package : PackageManager().FindPackagesForUserWithPackageTypes(user, PackageTypes::Main))
     {
-        if ((package.Id().Version().Major == major) &&
+        if (IsValidPackageVersion(package.Id().Version(), minVersion) &&
             (package.Id().Architecture() == platform) &&
             (package.Dependencies().Size() == 1) &&
             (package.Id().PublisherId() == microsoft))
@@ -65,3 +101,5 @@ int wmain(int argc, wchar_t* argv[])
 
     return 1;
 }
+
+
