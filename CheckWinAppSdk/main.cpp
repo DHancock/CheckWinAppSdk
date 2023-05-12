@@ -7,14 +7,15 @@ using namespace winrt::Windows::Management::Deployment;
 using namespace winrt::Windows::System;
 
 
-PackageVersion ConvertToPackageVersion(std::wstring str)
+PackageVersion ConvertToPackageVersion(const std::wstring& str)
 {
     PackageVersion version{ 0,0,0,0 };
+    unsigned int lastPos{ 0 };
 
     for (int index = 0; index < 4; index++)
     {
-        unsigned int pos{ str.find(L".") };
-        int value{ std::stoi(str.substr(0, pos)) };
+        unsigned int pos{ str.find(L".", lastPos) };
+        int value{ std::stoi(str.substr(lastPos, pos - lastPos)) };
 
         if ((value < 0) || (value > UINT16_MAX))
             throw std::invalid_argument("");
@@ -27,10 +28,10 @@ PackageVersion ConvertToPackageVersion(std::wstring str)
             case 3: version.Revision = static_cast<uint16_t>(value); break;
         }
 
-        if ((pos == std::wstring::npos) || (str.size() <=  (pos + 1)))
+        if ((pos == std::wstring::npos) || (str.size() <= (pos + 1)))
             break;
 
-        str.erase(0, pos + 1);
+        lastPos = pos + 1;
     }
 
     return version;
