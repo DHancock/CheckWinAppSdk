@@ -82,7 +82,7 @@ int wmain(int argc, wchar_t* argv[])
         {
             const std::wstring fullName{ package.Id().FullName() };
 
-            if ((fullName.size() > ddlmStart.size()) && (fullName.find(ddlmStart) == 0))
+            if ((fullName.size() > ddlmStart.size()) && (fullName.rfind(ddlmStart, 0) == 0))
             {
                 // check the DDLM package has a dependency on the framework package
                 auto&& dependency = package.Dependencies().GetAt(0);
@@ -91,7 +91,7 @@ int wmain(int argc, wchar_t* argv[])
                 {
                     const std::wstring frameworkName{ dependency.Id().FullName() };
 
-                    if ((frameworkName.size() > frameworkStart.size()) && (frameworkName.find(frameworkStart) == 0))
+                    if ((frameworkName.size() > frameworkStart.size()) && (frameworkName.rfind(frameworkStart, 0) == 0))
                     {
                         return 0;
                     }
